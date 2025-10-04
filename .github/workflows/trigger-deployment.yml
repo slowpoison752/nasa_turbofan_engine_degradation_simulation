@@ -1,0 +1,21 @@
+name: Trigger Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger CICD deployment
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.CICD_REPO_TOKEN }}" \
+            https://api.github.com/repos/slowpoison752/databricks_cicd_template/dispatches \
+            -d '{"event_type":"deploy-nasa-turbofan","client_payload":{"ref":"${{ github.ref_name }}","sha":"${{ github.sha }}"}}'
+          
+          echo "Triggered deployment from branch: ${{ github.ref_name }}"
